@@ -4,25 +4,21 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.footballquiz.serialization.TableDeserializer;
+import com.footballquiz.serialization.PositionsArrayDeserializer;
 import lombok.Getter;
-import lombok.Setter;
+
+import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SeasonDto {
 
-    @Getter @Setter
-    @JsonProperty(value = "live")
-    private String live;
-
-    @Getter @Setter
+    @Getter
     @JsonProperty(value = "compSeason")
     private SeasonInfoDto seasonInfo;
 
-
-    @Getter @Setter
-    @JsonDeserialize(using = TableDeserializer.class)
+    @Getter
+    @JsonDeserialize(using = PositionsArrayDeserializer.class)
     @JsonProperty(value = "tables")
-    private TableDto tableDto;
+    private List<PositionDto> positionDtos;
 }

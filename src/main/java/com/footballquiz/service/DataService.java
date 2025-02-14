@@ -1,52 +1,28 @@
 package com.footballquiz.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.footballquiz.model.PositionDto;
 import com.footballquiz.model.SeasonDto;
-import com.footballquiz.model.TableDto;
 import com.footballquiz.model.TeamDto;
-import com.footballquiz.util.HttpClient;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
+
 
 public class DataService {
 
-    private List<String> season;
+    private final SeasonDto season;
+    private final List<PositionDto> positionList;
 
-    public DataService(List<String> season) {
-        this.season = season;
+    public DataService () {
+        this.season = SingletonListSeasons.getInstance().getRandomSeason();
+        positionList = season.getPositionDtos();
     }
 
-    public String getSeasonData () {
-        Random rand = new Random();
-        String randomSeasonId = season.get(rand.nextInt(season.size()));
-        return HttpClient.getFixturesTable(randomSeasonId);
-    }
-
-    public SeasonDto serializeSeasonData (String data) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            return objectMapper.readValue(data, SeasonDto.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public List<PositionDto> getPositionsList () {
-        String data = getSeasonData();
-        SeasonDto season = serializeSeasonData(data);
-        TableDto tmp = season.getTableDto();
-        return tmp.getPositionDtos();
-    }
     public String getWinnerOfSeason () {
-        List<PositionDto> pos = getPositionsList();
         String teamName = null;
 
-        for (PositionDto position : pos) {
+        for (PositionDto position : positionList) {
             if (position.getPosition() == 1) {
                 TeamDto team = position.getTeam();
                 teamName = team.getName();
@@ -56,7 +32,7 @@ public class DataService {
     }
 
     public List<String> getRandomTeams () {
-        List<PositionDto> pos = getPositionsList();
+        List<PositionDto> pos = positionList;
         pos.remove(0);
         Collections.shuffle(pos);
         List<PositionDto> randomPos = pos.subList(0,3);
@@ -70,8 +46,6 @@ public class DataService {
     }
 
     public String getYearOfSeason () {
-        String data = getSeasonData();
-        SeasonDto season = serializeSeasonData(data);
         return season.getSeasonInfo().getLabel().toString();
     }
 }

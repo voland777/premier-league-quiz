@@ -1,19 +1,21 @@
 package com.footballquiz.service;
 
 import com.footballquiz.model.Question;
+import com.footballquiz.model.SeasonDto;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class QuizService {
 
-    public List<String> seasons = Arrays.asList("719", "578", "489", "418", "363");
-    public Question genarateQuestion () {
-        Question question = new Question();
-        DataService dataService = new DataService(seasons);
+    public Question question;
+    public DataService dataService = new DataService();
 
+    public QuizService () {
+        question = new Question();
+    }
+
+    public Question genarateQuestion () {
         String season = dataService.getYearOfSeason();
         question.setQuestion("Who won Premier League in the " + season + " season?");
 
